@@ -17,6 +17,7 @@ import com.google.firebase.firestore.Source;
 public class SightingsFragment extends Fragment {
     RecyclerView recyclerView2;
     BirdAdapter birdAdapter;
+    String docId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -26,7 +27,6 @@ public class SightingsFragment extends Fragment {
 
         recyclerView2 = view.findViewById(R.id.recyclerView2);
         setUpRecyclerView();
-
 
         return  view;
     }
