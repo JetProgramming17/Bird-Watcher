@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "779882218036",
+    "project_id": "bird-watcher-5a483",
+    "storage_bucket": "bird-watcher-5a483.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:779882218036:android:91029181d557d94f484061",
+        "android_client_info": {
+          "package_name": "com.example.birdwather"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-UzowQJNB7vFCO8qTavdVhDP95EBV3zI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
