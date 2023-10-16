@@ -19,6 +19,7 @@ import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
+import com.example.birdwather.Models.NoticableObservations;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
@@ -26,12 +27,19 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -138,8 +146,55 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        List<NoticableObservations> locationList = loadJsonDataFromAsset("data.json");
+
+        for (NoticableObservations location : locationList) {
+            MarkerOptions marker = new MarkerOptions()
+                    .position(new LatLng(location.getLat(), location.getLng()))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.iconbird))
+                    .title(location.getLocName());
+            googleMap.addMarker(marker).setTag(location);
+        }
         getMyLocation();
 
+    }
+    // Retrieve JSON data for RecentObservation
+    private List<NoticableObservations> loadJsonDataFromAsset(String fileName) {
+        List<NoticableObservations> locationList = new ArrayList<>();
+        try {
+            InputStream inputStream = getContext().getAssets().open(fileName);
+            int size = inputStream.available();
+            byte[] buffer = new byte[size];
+            inputStream.read(buffer);
+            inputStream.close();
+            String jsonString = new String(buffer, "UTF-8");
+
+            JSONArray jsonArray = new JSONArray(jsonString);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String name = jsonObject.getString("comName");
+                String speciesCode = jsonObject.getString("speciesCode");
+                String sciName = jsonObject.getString("sciName");
+                String locId = jsonObject.getString("locId");
+                String locName = jsonObject.getString("locName");
+                double latitude = jsonObject.getDouble("lat");
+                double longitude = jsonObject.getDouble("lng");
+                String obsDt = jsonObject.getString("obsDt");
+                int howMany = jsonObject.optInt("howMany", 6);
+                boolean obsValid = jsonObject.getBoolean("obsValid");
+                boolean obsReviewed = jsonObject.getBoolean("obsReviewed");
+                boolean locationPrivate = jsonObject.getBoolean("locationPrivate");
+                String subId = jsonObject.getString("subId");
+
+                locationList.add(new NoticableObservations(speciesCode, name, sciName, locId, locName, obsDt,
+                        howMany, latitude, longitude, obsValid, obsReviewed, locationPrivate, subId));
+            }
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        return locationList;
     }
 
 
